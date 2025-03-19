@@ -76,7 +76,7 @@ project_root/
 - Other contributors listed in GitHub repository.
 
 ## License
-This project is for educational purposes only.
+This project is licensed under the MIT License. See the LICENSE file for details.
 
 ## Contact
 For any inquiries, contact the project owner via GitHub issues or email.
