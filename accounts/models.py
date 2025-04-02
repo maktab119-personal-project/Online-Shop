@@ -16,62 +16,60 @@ def validate_image_size(image):
         raise ValidationError(f"Image file size must be less than {max_size_mb} MB")
 
 
-def validate_phone_number(value):
-    """
-    اعتبارسنجی شماره تلفن با استفاده از کتابخانه phonenumbers.
-    """
-    try:
-        phone_number = phonenumbers.parse(value)
-        if not phonenumbers.is_valid_number(phone_number):
-            raise ValidationError("شماره تلفن وارد شده معتبر نیست.")
-    except phonenumbers.phonenumberutil.NumberParseException:
-        raise ValidationError("شماره تلفن وارد شده معتبر نیست.")
+# def validate_phone_number(value):
+#     try:
+#         phone_number = phonenumbers.parse(value)
+#         if not phonenumbers.is_valid_number(phone_number):
+#             raise ValidationError("The phone number is not valid.")
+#     except phonenumbers.phonenumberutil.NumberParseException:
+#         raise ValidationError("The phone number is not valid.")
+#
 
 
 class Customer(AbstractBaseUser, LogicalMixin):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
-    # phone = models.CharField(
-    #     max_length=11,
-    #     blank=True,
-    #     verbose_name="Phone Number",
-    #     validators=[
-    #         RegexValidator(
-    #             regex=r'^(0|0098|\+98)?9(0[1-5]|[1-3]\d|2[0-2]|9[0-9])\d{7}$',
-    #             message="The entered phone number format is incorrect.",
-    #         ),
-    #     ],
-    # )
-    phone_number = models.CharField(
-        max_length=15,
-        unique=True,
-        null=True,
+    phone = models.CharField(
+        max_length=11,
         blank=True,
-        validators=[validate_phone_number]  # اعتبارسنجی شماره تلفن
+        verbose_name="Phone Number",
+        validators=[
+            RegexValidator(
+                regex=r'^(0|0098|\+98)?9(0[1-5]|[1-3]\d|2[0-2]|9[0-9])\d{7}$',
+                message="The entered phone number format is incorrect.",
+            ),
+        ],
     )
+    # phone_number = models.CharField(
+    #     max_length=15,
+    #     unique=True,
+    #     null=True,
+    #     blank=True,
+    #     validators=[validate_phone_number]
+    # )
     address = models.ForeignKey('Address', on_delete=models.SET_NULL, null=True, blank=True, related_name="customer_address")
     # registration_date = models.DateTimeField(auto_now_add=True)
     # update_at = models.DateTimeField(auto_now=True)
     # is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
+    is_superuser = models.BooleanField(default=False)
+    is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name']
+    REQUIRED_FIELDS = ['first_name', 'phone']
 
     def __str__(self):
         return self.email
 
-    @property
-    def is_staff(self):
-        return self.is_admin
+
 
     objects = CustomerManager()
 
 
 class Address(models.Model):
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE, null=True, blank=True, related_name="addresses")
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True)
+    # employee = models.ForeignKey(Employee, on_delete=models.CASCADE, null=True, blank=True)
     country = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
     province = models.CharField(max_length=100)
