@@ -12,12 +12,12 @@ class TestCustomer:
             email="test@gmail.com",
             first_name="darya",
             last_name="gh",
-            phone_number="+989123456789",
+            phone="+9891234567",
             password="secure1password"
         )
         assert customer.email == "test@gmail.com"
         assert customer.check_password("secure1password") is True
-        assert customer.phone_number == "+989123456789"
+        assert customer.phone == "+9891234567"
         assert customer.first_name == "darya"
         assert customer.last_name == "gh"
 
@@ -26,7 +26,7 @@ class TestCustomer:
             email="admin@gmail.com",
             first_name="Admin",
             last_name="User",
-            phone_number="+989123456789",
+            phone="+9891234567",
             password="admin1password"
         )
         assert admin.is_staff is True
@@ -39,7 +39,7 @@ class TestAddress:
             email="user@gmail.com",
             first_name="darya",
             last_name="gh",
-            phone_number="+989123456789",
+            phone="+9891234567",
             password="pass1word"
         )
         address = Address.objects.create(
@@ -66,13 +66,13 @@ class TestEmployee:
             email="employee@example.com",
             first_name="shayan",
             last_name="ra",
-            phone="+989123456789",
+            phone="+9891234567",
             password="secure1password",
             role="operator"
         )
         assert employee.email == "employee@example.com"
         assert employee.check_password("secure1password") is True
-        assert employee.phone == "+989123456789"
+        assert employee.phone == "+9891234567"
         assert employee.first_name == "shayan"
         assert employee.last_name == "ra"
         assert employee.role == "operator"
@@ -82,7 +82,7 @@ class TestEmployee:
             email="manager@example.com",
             first_name="iman",
             last_name="gh",
-            phone="+989321654987",
+            phone="+9893216549",
             password="admin1password",
             role="manager"
         )
