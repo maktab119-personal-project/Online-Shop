@@ -1,9 +1,15 @@
+
 import pytest
 from django.utils import timezone
 from datetime import timedelta
+
+from django.utils.timezone import now
+
 from core.models import LogicalMixin
 from employee.models import Employee
 from accounts.models import Customer, Address
+from products.models import Product, Category
+from orders.models import Order, OrderItem, Payment
 
 @pytest.mark.django_db
 class TestCustomer:
@@ -89,3 +95,108 @@ class TestEmployee:
         assert manager.is_staff is True
         assert manager.is_superuser is True
         assert manager.role == "manager"
+
+
+
+@pytest.mark.django_db
+class TestOrder:
+    def test_create_order(self):
+        customer = Customer.objects.create_user(
+            email="hi@gmail.com",
+            first_name="darya",
+            last_name="gh",
+            phone="+9891234567",
+            password="secure1password"
+        )
+        address = Address.objects.create(
+            customer=customer,
+            street="123 Test St",
+            city="Test City",
+            number_plate="12",
+            zipcode="12345"
+        )
+        order = Order.objects.create(
+            customer=customer,
+            address=address,
+            order_date=now().date(),
+            total_price=100000,
+            status='pending'
+        )
+        assert order.customer == customer
+        assert order.address == address
+        assert order.total_price == 100000
+        assert order.status == 'pending'
+
+    def test_create_order_item(self):
+        customer = Customer.objects.create_user(
+            email="test@gmail.com",
+            first_name="baran",
+            last_name="gh",
+            phone="+9891234567",
+            password="secure1password"
+        )
+        address = Address.objects.create(
+            customer=customer,
+            street="123 Test St",
+            city="Test City",
+            number_plate="12",
+            zipcode="12345"
+        )
+        order = Order.objects.create(
+            customer=customer,
+            address=address,
+            order_date=now().date(),
+            total_price=100000,
+            status='pending'
+        )
+        category = Category.objects.create(name="Electronics")
+        product = Product.objects.create(
+            name="Test Product",
+            price=50000,
+            category=category,
+            stock=10
+        )
+        order_item = OrderItem.objects.create(
+            order=order,
+            quantity=2,
+            subtotal=100000
+        )
+        order_item.product.add(product)
+        assert order_item.order == order
+        assert order_item.quantity == 2
+        assert order_item.subtotal == 100000
+        assert product in order_item.product.all()
+
+    def test_create_payment(self):
+        customer = Customer.objects.create_user(
+            email="test@gmail.com",
+            first_name="darya",
+            last_name="gh",
+            phone="+9891234567",
+            password="secure1password"
+        )
+        address = Address.objects.create(
+            customer=customer,
+            street="123 Test St",
+            city="Test City",
+            number_plate="12",
+            zipcode="12345"
+        )
+        order = Order.objects.create(
+            customer=customer,
+            address=address,
+            order_date=now().date(),
+            total_price=100000,
+            status='pending'
+        )
+        payment = Payment.objects.create(
+            order=order,
+            customer=customer,
+            amount=100000,
+            payment_method='credit_card',
+            payment_date_time=now()
+        )
+        assert payment.order == order
+        assert payment.customer == customer
+        assert payment.amount == 100000
+        assert payment.payment_method == 'credit_card'
