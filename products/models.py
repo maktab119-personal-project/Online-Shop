@@ -25,7 +25,7 @@ class Product(LogicalMixin):
 
 
     def __str__(self):
-        return self.name
+        return f"{self.name} - {self.discounts}{self.get_discounted_price()}"
 
     def get_active_discounts(self):
         today = now().date()
@@ -35,14 +35,22 @@ class Product(LogicalMixin):
             code__isnull=True  # فقط تخفیف‌های عمومی برای محصول
         )
 
-    def get_discounted_price(self):
-        price = self.price
-        for discount in self.get_active_discounts():
-            if discount.is_percentage:
-                price -= price * (discount.value / 100)
-            else:
-                price -= discount.value
-        return max(price, 0)
+    def get_discount_price(self):
+        discounts = self.get_active_discounts()
+        if not discounts.exists():
+            return self.price
+
+        best_discount = max(
+            discounts,
+            key=lambda d: (d.value if not d.is_percentage else self.price * (d.value / 100))
+        )
+
+        if best_discount.is_percentage:
+            discounted = self.price - self.price * (best_discount.value / 100)
+        else:
+            discounted = self.price - best_discount.value
+
+        return max(discounted, 0)
 
 
 class Category(LogicalMixin):
