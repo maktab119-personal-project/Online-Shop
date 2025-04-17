@@ -2,6 +2,7 @@ from django.shortcuts import render , get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
+from rest_framework import generics, permissions
 from rest_framework.generics import GenericAPIView , ListAPIView
 from rest_framework.mixins import (
     ListModelMixin,
@@ -12,17 +13,10 @@ from rest_framework.mixins import (
 )
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Product , Category
-from .serializers import ProductSerializer , CategorySerializer
-
-from django.utils.decorators import method_decorator
-from django.views.decorators.csrf import csrf_exempt
+from .models import Product , Category, Discount
+from .serializers import ProductSerializer , CategorySerializer, DiscountCreateSerializer
 from django.db.models import Q
-from rest_framework.generics import GenericAPIView
-from rest_framework.mixins import ListModelMixin, CreateModelMixin
 
-from .models import Product
-from .serializers import ProductSerializer
 
 @method_decorator(csrf_exempt, name='dispatch')
 class ProductListCreateView(GenericAPIView, ListModelMixin, CreateModelMixin):
@@ -70,10 +64,17 @@ class ProductRetrieveUpdateDeleteView(GenericAPIView, RetrieveModelMixin, Update
 
     def delete(self, request, *args, **kwargs):
         instance = self.get_object()
-        instance.make_delete()  # استفاده از LogicalMixin برای حذف منطقی
+        instance.make_delete()
         return Response({"message": "Product deleted logically."}, status=status.HTTP_204_NO_CONTENT)
 
 
 class CategoryListView(ListAPIView):
     queryset = Category.objects.filter(is_active=True, is_delete=False)
     serializer_class = CategorySerializer
+
+
+
+class DiscountCreateAPIView(generics.CreateAPIView):
+    queryset = Discount.objects.all()
+    serializer_class = DiscountCreateSerializer
+    permission_classes = [permissions.IsAdminUser]
