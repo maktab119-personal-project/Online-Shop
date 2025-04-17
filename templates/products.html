@@ -1,11 +1,11 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>Sea Online Shop - محصولات</title>
+    <title>Sea Online Shop - Products</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         /* Reset and Base Styles */
@@ -179,6 +179,7 @@
             text-align: center;
             padding: 15px;
             backdrop-filter: blur(5px);
+            position: relative;
         }
 
         .product:hover {
@@ -200,11 +201,35 @@
             color: #00796b;
         }
 
-        .price {
+        .price-container {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+
+        .current-price {
             font-size: 1.2rem;
             font-weight: bold;
             color: #e74c3c;
-            margin-bottom: 10px;
+        }
+
+        .original-price {
+            font-size: 0.9rem;
+            text-decoration: line-through;
+            color: #777;
+        }
+
+        .discount-badge {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #e74c3c;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            z-index: 1;
         }
 
         .rating {
@@ -336,6 +361,44 @@
             width: 80%;
         }
 
+        /* Categories List */
+        #categories-list {
+            padding-right: 0;
+        }
+        
+        #categories-list li {
+            margin-bottom: 12px;
+            padding: 8px 12px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+        
+        #categories-list li:hover {
+            background-color: rgba(0, 121, 107, 0.1);
+        }
+        
+        #categories-list li a {
+            color: #00695c;
+            display: block;
+            font-weight: 500;
+        }
+        
+        #categories-list li a:hover {
+            color: #e74c3c;
+            text-decoration: none;
+        }
+        
+        /* Active Category */
+        #categories-list li.active-category {
+            background-color: rgba(0, 121, 107, 0.2);
+            border-right: 3px solid #00796b;
+        }
+        
+        #categories-list li.active-category a {
+            color: #00796b;
+            font-weight: 600;
+        }
+
         /* Responsive Styles */
         @media (max-width: 992px) {
             main {
@@ -393,42 +456,6 @@
                 justify-content: center;
             }
         }
-        #categories-list {
-            padding-right: 0;
-        }
-        
-        #categories-list li {
-            margin-bottom: 12px;
-            padding: 8px 12px;
-            border-radius: 5px;
-            transition: all 0.3s;
-        }
-        
-        #categories-list li:hover {
-            background-color: rgba(0, 121, 107, 0.1);
-        }
-        
-        #categories-list li a {
-            color: #00695c;
-            display: block;
-            font-weight: 500;
-        }
-        
-        #categories-list li a:hover {
-            color: #e74c3c;
-            text-decoration: none;
-        }
-        
-        /* استایل برای حالت فعال دسته‌بندی */
-        #categories-list li.active-category {
-            background-color: rgba(0, 121, 107, 0.2);
-            border-right: 3px solid #00796b;
-        }
-        
-        #categories-list li.active-category a {
-            color: #00796b;
-            font-weight: 600;
-        }
     </style>
 </head>
 <body>
@@ -436,14 +463,14 @@
         <div class="container">
             <h1>Sea Online Shop</h1>
             <div class="search-box">
-                <input type="text" placeholder="جستجوی محصولات...">
+                <input type="text" placeholder="Search products...">
                 <button><i class="fas fa-search"></i></button>
             </div>
             <nav>
                 <ul>
-                    <li><a href="/"><i class="fas fa-home"></i> خانه</a></li>
-                    <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> حساب کاربری</a></li>
-                    <li><a href="#"><i class="fas fa-shopping-cart"></i> سبد خرید</a></li>
+                    <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="#"><i class="fas fa-shopping-cart"></i> Cart</a></li>
                 </ul>
             </nav>
         </div>
@@ -451,19 +478,19 @@
 
     <main class="container">
         <aside class="sidebar">
-            <h3>دسته بندی ها</h3>
+            <h3>Categories</h3>
             <div class="wave-decoration"></div>
             <ul id="categories-list">
                 <!-- Categories will be loaded by JavaScript -->
             </ul>
 
-            <h3>فیلتر قیمت</h3>
+            <h3>Price Filter</h3>
             <div class="wave-decoration"></div>
             <div class="price-filter">
                 <input type="range" id="price-range" min="0" max="10000000" value="5000000">
                 <div class="price-range">
-                    <span>0 تومان</span>
-                    <span>10,000,000 تومان</span>
+                    <span>0 Toman</span>
+                    <span>10,000,000 Toman</span>
                 </div>
             </div>
         </aside>
@@ -480,25 +507,25 @@
     <footer>
         <div class="container">
             <div class="footer-section">
-                <h4>درباره ما</h4>
+                <h4>About Us</h4>
                 <div class="wave-decoration"></div>
-                <p>فروشگاه اینترنتی Sea Online با سالها تجربه در زمینه فروش محصولات دریایی با کیفیت</p>
+                <p>Sea Online is an established store with years of experience in providing high-quality products.</p>
             </div>
             <div class="footer-section">
-                <h4>لینک های مفید</h4>
+                <h4>Quick Links</h4>
                 <div class="wave-decoration"></div>
                 <ul>
-                    <li><a href="#">قوانین و مقررات</a></li>
-                    <li><a href="#">سوالات متداول</a></li>
-                    <li><a href="#">تماس با ما</a></li>
-                    <li><a href="#">درباره ما</a></li>
+                    <li><a href="#">Shipping Policy</a></li>
+                    <li><a href="#">FAQs</a></li>
+                    <li><a href="#">Contact Us</a></li>
+                    <li><a href="#">About Us</a></li>
                 </ul>
             </div>
             <div class="footer-section">
-                <h4>تماس با ما</h4>
+                <h4>Contact Us</h4>
                 <div class="wave-decoration"></div>
-                <p><i class="fas fa-phone"></i> 021-12345678</p>
-                <p><i class="fas fa-envelope"></i> info@sea-shop.com</p>
+                <p><i class="fas fa-phone"></i> +98 21 1128 2288</p>
+                <p><i class="fas fa-envelope"></i> support@sea-shop.com</p>
                 <div class="social-icons">
                     <a href="#"><i class="fab fa-instagram"></i></a>
                     <a href="#"><i class="fab fa-telegram"></i></a>
@@ -507,10 +534,9 @@
             </div>
         </div>
         <div class="copyright">
-            <p>© 2023 کلیه حقوق برای Sea Online Shop محفوظ است.</p>
+            <p>© 2025 Sea Online Shop. All Rights Reserved.</p>
         </div>
     </footer>
-    <ul id="categories-list" style="padding-right: 1rem;"></ul>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -521,10 +547,19 @@
             const paginationContainer = document.getElementById('pagination');
             const priceRange = document.getElementById('price-range');
             
+            // Current active category
+            let activeCategory = null;
+            
             // Fetch products from API
             async function fetchProducts(page = 1) {
                 try {
-                    const response = await fetch(`/api/products/?page=${page}`, {
+                    let url = `/api/products/?page=${page}`;
+                    
+                    if (activeCategory) {
+                        url += `&category=${activeCategory}`;
+                    }
+                    
+                    const response = await fetch(url, {
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRFToken': csrfToken
@@ -546,31 +581,34 @@
             // Fetch categories from API
             async function fetchCategories() {
                 try {
-                    console.log('Starting to fetch categories...');
+                    console.log('Fetching categories...');
                     const response = await fetch('/api/categories/', {
                         headers: {
                             'Content-Type': 'application/json',
                             'X-CSRFToken': csrfToken
                         }
                     });
-                    console.log('Response status:', response.status);
-
+                    
                     if (!response.ok) {
                         throw new Error('Network response was not ok');
                     }
                     
                     const data = await response.json();
-                    console.log('Categories data received:', data);
-
                     renderCategories(data);
                 } catch (error) {
                     console.error('Error fetching categories:', error);
+                    categoriesList.innerHTML = '<li style="color:red">Error loading categories</li>';
                 }
             }
             
-            // Render products
+            // Render products with discount support
             function renderProducts(products) {
                 productsContainer.innerHTML = '';
+                
+                if (products.length === 0) {
+                    productsContainer.innerHTML = '<p class="no-products">No products found</p>';
+                    return;
+                }
                 
                 products.forEach(product => {
                     const productElement = document.createElement('div');
@@ -580,23 +618,26 @@
                     const avgRating = product.review_product.length > 0 ? 
                         (product.review_product.reduce((sum, review) => sum + review.rating, 0) / product.review_product.length) : 0;
                     
-                    // Calculate final price with discount
-                    const discount = product.discounts.length > 0 ? 
-                        product.discounts[0].percent : 0;
-                    const finalPrice = product.price * (1 - discount / 100);
+                    // Check if product has discount
+                    const hasDiscount = product.discounts && product.discounts.length > 0;
+                    const originalPrice = product.price;
+                    const discountedPrice = product.discount_price || originalPrice;
+                    const discountPercent = hasDiscount ? 
+                        Math.round(((originalPrice - discountedPrice) / originalPrice) * 100) : 0;
                     
                     productElement.innerHTML = `
+                        ${hasDiscount ? `<div class="discount-badge">${discountPercent}% OFF</div>` : ''}
                         <img src="${product.img || 'https://via.placeholder.com/300'}" alt="${product.name}">
                         <h3>${product.name}</h3>
-                        <div class="price">
-                            ${finalPrice.toLocaleString()} تومان
-                            ${discount > 0 ? `<span style="text-decoration: line-through; color: #777; font-size: 0.9rem;">${product.price.toLocaleString()}</span>` : ''}
+                        <div class="price-container">
+                            <span class="current-price">${discountedPrice.toLocaleString()} Toman</span>
+                            ${hasDiscount ? `<span class="original-price">${originalPrice.toLocaleString()} Toman</span>` : ''}
                         </div>
                         <div class="rating">
                             ${renderStars(avgRating)}
                             <span>(${product.review_product.length})</span>
                         </div>
-                        <button class="add-to-cart" data-id="${product.id}">افزودن به سبد خرید</button>
+                        <button class="add-to-cart" data-id="${product.id}">Add to Cart</button>
                     `;
                     
                     productsContainer.appendChild(productElement);
@@ -628,45 +669,84 @@
             }
             
             // Render categories
-            function renderCategories(categories) {
-                console.log('rendering category:',categories);
-                const categoriesList = document.getElementById('categories-list');
-                if (!categoriesList) {
-                    console.error('Categories list element not found!');
-                    return;
-                }
+            function renderCategories(data) {
                 categoriesList.innerHTML = '';
-                const categoriesToRender = categories.results || categories;
-                categoriesToRender.forEach(category => {
-                    const categoryElement = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = `#${category.id}`;
-                    link.textContent = category.name;
-                    link.addEventListener('click', (e) => {
+                
+                // Handle both paginated and non-paginated responses
+                const categories = data.results || data;
+                
+                // Add "All Categories" option
+                const allItem = document.createElement('li');
+                allItem.innerHTML = '<a href="#" class="category-link" data-id="all">All Categories</a>';
+                allItem.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    setActiveCategory(null);
+                    fetchProducts();
+                });
+                categoriesList.appendChild(allItem);
+                
+                // Add actual categories
+                categories.forEach(category => {
+                    const item = document.createElement('li');
+                    item.innerHTML = `<a href="#" class="category-link" data-id="${category.id}">${category.name}</a>`;
+                    item.addEventListener('click', (e) => {
                         e.preventDefault();
+                        setActiveCategory(category.id);
                         filterByCategory(category.id);
                     });
-                     categoryElement.appendChild(link);
-                     categoriesList.appendChild(categoryElement);
+                    categoriesList.appendChild(item);
                 });
-                categories.forEach(category => {
-                    const categoryElement = document.createElement('li');
-                    const link = document.createElement('a');
-                    link.href = `#${category.id}`;
-                    link.textContent = category.name;
-                    link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        filterByCategory(category.id);
+            }
+            
+            // Set active category
+            function setActiveCategory(categoryId) {
+                activeCategory = categoryId;
+                
+                // Remove active class from all items
+                document.querySelectorAll('#categories-list li').forEach(item => {
+                    item.classList.remove('active-category');
+                });
+                
+                // Add active class to selected item
+                if (categoryId) {
+                    const activeItem = document.querySelector(`#categories-list li a[data-id="${categoryId}"]`);
+                    if (activeItem) {
+                        activeItem.parentElement.classList.add('active-category');
+                    }
+                } else {
+                    // Select "All Categories"
+                    const allItem = document.querySelector('#categories-list li a[data-id="all"]');
+                    if (allItem) {
+                        allItem.parentElement.classList.add('active-category');
+                    }
+                }
+            }
+            
+            // Filter by category
+            async function filterByCategory(categoryId) {
+                try {
+                    const response = await fetch(`/api/products/?category=${categoryId}`, {
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRFToken': csrfToken
+                        }
                     });
                     
-                    categoryElement.appendChild(link);
-                    categoriesList.appendChild(categoryElement);
-                });
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    
+                    const data = await response.json();
+                    renderProducts(data.results);
+                    renderPagination(data.count, 1);
+                } catch (error) {
+                    console.error('Error filtering products:', error);
+                }
             }
             
             // Render pagination
             function renderPagination(totalItems, currentPage) {
-                const itemsPerPage = 6; // Should match your API pagination
+                const itemsPerPage = 12; // Adjust based on your API
                 const totalPages = Math.ceil(totalItems / itemsPerPage);
                 
                 paginationContainer.innerHTML = '';
@@ -686,7 +766,10 @@
                 }
                 
                 // Page numbers
-                for (let i = 1; i <= totalPages; i++) {
+                const startPage = Math.max(1, currentPage - 2);
+                const endPage = Math.min(totalPages, currentPage + 2);
+                
+                for (let i = startPage; i <= endPage; i++) {
                     const pageLink = document.createElement('a');
                     pageLink.href = '#';
                     pageLink.textContent = i;
@@ -713,30 +796,8 @@
                 }
             }
             
-            // Filter by category
-            async function filterByCategory(categoryId) {
-                try {
-                    const response = await fetch(`/api/products/?category=${categoryId}`, {
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'X-CSRFToken': csrfToken
-                        }
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    
-                    const data = await response.json();
-                    renderProducts(data.results);
-                    renderPagination(data.count, 1);
-                } catch (error) {
-                    console.error('Error filtering products:', error);
-                }
-            }
-            
             // Filter by price
-            priceRange.addEventListener('change', async function() {
+            priceRange.addEventListener('input', async function() {
                 try {
                     const maxPrice = this.value;
                     const response = await fetch(`/api/products/?max_price=${maxPrice}`, {
@@ -776,14 +837,14 @@
                     });
                     
                     if (response.ok) {
-                        alert('محصول به سبد خرید اضافه شد');
+                        alert('Product added to cart successfully!');
                     } else {
                         const errorData = await response.json();
-                        alert(errorData.message || 'خطا در افزودن به سبد خرید');
+                        alert(errorData.message || 'Failed to add product to cart');
                     }
                 } catch (error) {
                     console.error('Error adding to cart:', error);
-                    alert('خطا در ارتباط با سرور');
+                    alert('Error communicating with server');
                 }
             }
             
@@ -791,35 +852,43 @@
             const searchInput = document.querySelector('.search-box input');
             const searchButton = document.querySelector('.search-box button');
             
-            searchButton.addEventListener('click', async function() {
+            function performSearch() {
                 const searchTerm = searchInput.value.trim();
                 
                 if (searchTerm) {
-                    try {
-                        const response = await fetch(`/api/products/?search=${searchTerm}`, {
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'X-CSRFToken': csrfToken
-                            }
+                    fetch(`/api/products/?search=${encodeURIComponent(searchTerm)}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.json();
+                        })
+                        .then(data => {
+                            renderProducts(data.results);
+                            renderPagination(data.count, 1);
+                        })
+                        .catch(error => {
+                            console.error('Error searching products:', error);
                         });
-                        
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        
-                        const data = await response.json();
-                        renderProducts(data.results);
-                        renderPagination(data.count, 1);
-                    } catch (error) {
-                        console.error('Error searching products:', error);
-                    }
+                }
+            }
+            
+            searchButton.addEventListener('click', performSearch);
+            searchInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    performSearch();
                 }
             });
             
             // Initial load
             fetchProducts();
-            console.log('fetching category....')
             fetchCategories();
+            
+            // Set "All Categories" as active by default
+            setTimeout(() => {
+                const allCategories = document.querySelector('#categories-list li a[data-id="all"]');
+                if (allCategories) {
+                    allCategories.parentElement.classList.add('active-category');
+                }
+            }, 100);
         });
     </script>
 </body>
