@@ -1,5 +1,8 @@
 from django.db import models
 
+from employee.models import Employee
+
+
 # Create your models here.
 class LogicalMixin(models.Model):
     is_active = models.BooleanField(default=True)
@@ -25,3 +28,10 @@ class LogicalMixin(models.Model):
     def make_undelete(self):
         self.is_delete = False
         self.save(update_fields=['is_delete'])
+
+
+class ProxyEmployee(Employee):
+    class Meta:
+        proxy = True
+        verbose_name = "Employee"
+        verbose_name_plural = "Employees"
