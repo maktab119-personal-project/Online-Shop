@@ -11,15 +11,15 @@ class CustomerAdmin(BaseUserAdmin):
     list_display = ['id','first_name','last_name','email']
     ordering = ['id']
     search_fields = ['email']
-    readonly_fields = ['last_login']
-    # filter_horizontal = ['groups','user_permissions']
+    filter_horizontal = ['groups','user_permissions']
 
     fieldsets = (
         ('Main', {'fields':('first_name','last_name','phone', 'email','password')}),
-        ('permissions',{'fields':('is_active','is_verified','is_staff','is_superuser','groups','last_login','user_permissions')}),
+        ('permissions',{'fields':('is_active','is_staff','is_superuser','groups','last_login','user_permissions')}),
     )
 
     add_fieldsets = (
         (None, {'fields':('first_name','phone','email','password1','password2')}),
     )
 
+admin.site.register(Customer, CustomerAdmin)
