@@ -8,30 +8,44 @@ from core.models import LogicalMixin
 # Create your models here.
 
 def validate_image_size(image):
-    max_size_mb = 4
-    if image.size > max_size_mb * 1024 * 1024:
-        raise ValidationError(f"Image file size must be less than {max_size_mb} MB")
+    MAX_SIZE_MB = 4
+    if image.size > MAX_SIZE_MB * 1024 * 1024: #MAX
+        raise ValidationError(f"Image file size must be less than {MAX_SIZE_MB} MB")
 
 
-class Product(models.Model):
-    category = models.ForeignKey('Category', on_delete=models.CASCADE,limit_choices_to={'level': 3})
+class Product(LogicalMixin):
+    category = models.ForeignKey('Category', on_delete=models.CASCADE)
     discounts = models.ManyToManyField('Discount', blank=True)
-    reviews = models.ForeignKey('Review', on_delete=models.CASCADE, null=True, blank=True,related_name='product_reviews')
     name = models.CharField(max_length=255)
     brand_name = models.CharField(max_length=255 ,default='Unknown')
     description = models.TextField()
     img = models.ImageField(upload_to='products/', validators=[validate_image_size])
-    price = models.BigIntegerField()
-    stock = models.BigIntegerField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    price = models.BigIntegerField(default=1000)
+    stock = models.BigIntegerField(default=0)
 
 
     def __str__(self):
         return self.name
 
+    def get_active_discounts(self):
+        today = now().date()
+        return self.discounts.filter(
+            start_date__lte=today,
+            end_date__gte=today,
+            code__isnull=True  # فقط تخفیف‌های عمومی برای محصول
+        )
 
-class Category(models.Model):
+    def get_discounted_price(self):
+        price = self.price
+        for discount in self.get_active_discounts():
+            if discount.is_percentage:
+                price -= price * (discount.value / 100)
+            else:
+                price -= discount.value
+        return max(price, 0)
+
+
+class Category(LogicalMixin):
     Level_choices = [
         (1, 'Main-Category'),
         (2, 'Sub-Category'),
@@ -47,25 +61,32 @@ class Category(models.Model):
     )
     level = models.PositiveSmallIntegerField(choices=Level_choices, verbose_name="Category_Level", default=1)
 
+    def __str__(self):
+        return self.name
 
 
-class Discount(models.Model):
+class Discount(LogicalMixin):
     code = models.CharField(max_length=50, unique=True, null=True, blank=True)
-    value = models.BigIntegerField()
+    value = models.BigIntegerField(help_text="If percentage, enter number like 20 for 20%")
+    is_percentage = models.BooleanField(default=True)
     start_date = models.DateField()
     end_date = models.DateField()
 
+    def is_valid(self):
+        today = now().date()
+        return self.start_date <= today <= self.end_date
+
     def __str__(self):
-        return f"{self.code} - {self.value}"
+        typ = "%" if self.is_percentage else "TOMAN"
+        return f"{self.code or 'PUBLIC'} - {self.value}{typ}"
 
 
-class Review(models.Model):
+
+class Review(LogicalMixin):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='review_product')
     rating = models.SmallIntegerField()
     comment = models.TextField()
     review_date = models.DateField(auto_now_add=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.product.name} - {self.rating}/5"
