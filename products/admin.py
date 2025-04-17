@@ -7,7 +7,7 @@ from .models import Product, Category
 
 # Register your models here.
 class ProductsAdmin(admin.ModelAdmin):
-    list_display = ['id','name','brand_name','category','price','stock','description']
+    list_display = ['id','name','brand_name','category','price','stock','description','get_discount_price']
     ordering = ['id']
     search_fields = ['name']
     list_filter = ['category']
