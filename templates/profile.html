@@ -1,0 +1,477 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>پروفایل کاربری | فروشگاه اینترنتی</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #00796b;
+            --primary-dark: #00695c;
+            --primary-light: #b2ebf2;
+            --secondary: #4db6ac;
+            --accent: #00897b;
+            --text-dark: #2c3e50;
+            --text-light: #e0f7fa;
+            --white: #ffffff;
+            --gray-light: #f5f5f5;
+            --shadow-sm: 0 2px 10px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 8px 32px rgba(31, 38, 135, 0.15);
+            --shadow-lg: 0 15px 30px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --border-radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Vazirmatn', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, rgba(224, 247, 250, 0.95), rgba(128, 222, 234, 0.95)), 
+                        url('https://images.unsplash.com/photo-1519681393784-d120267933ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            color: var(--text-dark);
+            min-height: 100vh;
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* هدر پروفایل */
+        .profile-header {
+            text-align: center;
+            margin-bottom: 40px;
+            position: relative;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .profile-header h1 {
+            font-size: 2.5rem;
+            color: var(--primary-dark);
+            margin-bottom: 10px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .profile-header p {
+            font-size: 1.2rem;
+            color: var(--primary-dark);
+            opacity: 0.9;
+        }
+
+        /* کارت‌های پروفایل */
+        .profile-card {
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-md);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transition: var(--transition);
+        }
+
+        .profile-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .profile-section {
+            margin-bottom: 30px;
+        }
+
+        .profile-section h2 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--secondary);
+            display: inline-block;
+        }
+
+        /* ردیف‌های اطلاعات */
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(0, 121, 107, 0.1);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: var(--primary-dark);
+            flex: 1;
+        }
+
+        .info-value {
+            flex: 2;
+            text-align: left;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .edit-address-link {
+            color: var(--accent);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .edit-address-link:hover {
+            color: var(--primary-dark);
+            text-decoration: underline;
+        }
+
+        /* آمار خرید */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .stat-box {
+            background-color: rgba(77, 182, 172, 0.1);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            transition: var(--transition);
+            border: 1px solid rgba(77, 182, 172, 0.2);
+        }
+
+        .stat-box:hover {
+            background-color: rgba(77, 182, 172, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .stat-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+            color: var(--accent);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-dark);
+            opacity: 0.8;
+        }
+
+        /* دکمه‌های اقدام */
+        .action-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        .action-btn {
+            padding: 12px 20px;
+            background: linear-gradient(to right, var(--primary), var(--accent));
+            color: var(--white);
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 6px rgba(0, 121, 107, 0.1);
+        }
+
+        .action-btn:hover {
+            background: linear-gradient(to right, var(--primary-dark), var(--primary));
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 121, 107, 0.2);
+        }
+
+        .action-btn i {
+            font-size: 1rem;
+        }
+
+        /* افکت موج */
+        .wave-decoration {
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--secondary), var(--accent), var(--secondary), transparent);
+            margin: 20px auto;
+            border-radius: 3px;
+            width: 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .wave-decoration::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            animation: wave 3s linear infinite;
+        }
+
+        @keyframes wave {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        /* رسپانسیو */
+        @media (max-width: 768px) {
+            .info-row {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+            }
+            
+            .info-label, .info-value {
+                width: 100%;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-header h1 {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .profile-card {
+                padding: 20px 15px;
+            }
+        }
+
+        /* انیمیشن‌ها */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-fade {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="profile-header animate-fade">
+            <h1>پروفایل کاربری</h1>
+            <div class="wave-decoration"></div>
+            <p>مدیریت حساب کاربری و اطلاعات شخصی</p>
+        </div>
+        
+        <div class="profile-card animate-fade delay-1">
+            <div class="profile-section">
+                <h2>اطلاعات شخصی</h2>
+                <div class="info-row">
+                    <div class="info-label">نام کاربر:</div>
+                    <div class="info-value">
+                        <i class="fas fa-user" style="color: var(--accent);"></i>
+                        {{ user.username }}
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">ایمیل:</div>
+                    <div class="info-value">
+                        <i class="fas fa-envelope" style="color: var(--accent);"></i>
+                        {{ user.email }}
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">شماره تماس:</div>
+                    <div class="info-value">
+                        <i class="fas fa-phone" style="color: var(--accent);"></i>
+                        {{ user.phone_number }}
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">آدرس:</div>
+                    <div class="info-value">
+                        <i class="fas fa-map-marker-alt" style="color: var(--accent);"></i>
+                        {% if user.address %}
+                            {{ user.address }}
+                        {% else %}
+                            آدرس ثبت نشده است.
+                        {% endif %}
+{#                        <a href="{% url 'address'%}" class="edit-address-link">#}
+                            <i class="fas fa-edit"></i> ویرایش آدرس
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="profile-section">
+                <h2>اطلاعات حساب</h2>
+                <div class="info-row">
+                    <div class="info-label">تاریخ عضویت:</div>
+                    <div class="info-value">
+                        <i class="fas fa-calendar-alt" style="color: var(--accent);"></i>
+                        {{ user.date_joined|date:"Y/m/d" }}
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">امتیاز کاربر:</div>
+                    <div class="info-value">
+                        <i class="fas fa-star" style="color: var(--accent);"></i>
+                        {{ user.points }} امتیاز
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-card animate-fade delay-2">
+            <h2>آمار خرید</h2>
+            <div class="stats-container">
+                <div class="stat-box">
+                    <div class="stat-icon">🛒</div>
+                    <div class="stat-value">{{ user.orders_count }}</div>
+                    <div class="stat-label">تعداد سفارشات</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">💰</div>
+                    <div class="stat-value">{{ user.total_spent }}</div>
+                    <div class="stat-label">تومان مجموع خریدها</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">🎁</div>
+                    <div class="stat-value">{{ user.discount }}%</div>
+                    <div class="stat-label">تخفیف ویژه</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-icon">⭐</div>
+                    <div class="stat-value">{{ user.average_rating }}</div>
+                    <div class="stat-label">میانگین امتیاز</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-card animate-fade delay-3">
+            <div class="profile-section">
+                <h2>تنظیمات و علاقه‌مندی‌ها</h2>
+                <div class="info-row">
+                    <div class="info-label">اعلان‌ها:</div>
+                    <div class="info-value">
+                        <i class="fas fa-bell" style="color: var(--accent);"></i>
+                        {{ user.notifications_enabled|yesno:"فعال,غیرفعال" }}
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-label">علاقه‌مندی‌ها:</div>
+                    <div class="info-value">
+                        <i class="fas fa-heart" style="color: var(--accent);"></i>
+                        {{ user.interests }}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn">
+                    <i class="fas fa-edit"></i> ویرایش پروفایل
+                </button>
+                <button class="action-btn">
+                    <i class="fas fa-key"></i> تغییر رمز عبور
+                </button>
+                <button class="action-btn">
+                    <i class="fas fa-truck"></i> پیگیری سفارشات
+                </button>
+                <button class="action-btn">
+                    <i class="fas fa-tag"></i> کدهای تخفیف من
+                </button>
+                <button class="action-btn" style="background: linear-gradient(to right, #e74c3c, #c0392b);">
+                    <i class="fas fa-sign-out-alt"></i> خروج از حساب
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // انیمیشن اسکرول
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.animate-fade');
+            
+            function checkScroll() {
+                animatedElements.forEach(element => {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.2;
+                    
+                    if (elementPosition < screenPosition) {
+                        element.style.opacity = '1';
+                        element.style.transform = 'translateY(0)';
+                    }
+                });
+            }
+            
+            // اجرای اولیه
+            checkScroll();
+            
+            // اجرا هنگام اسکرول
+            window.addEventListener('scroll', checkScroll);
+            
+            // ذخیره‌سازی آیدی کاربر در localStorage
+            const userId = "{{ user.id }}";
+            if (userId) {
+                localStorage.setItem('userId', userId);
+                console.log("User ID ذخیره شد در localStorage:", userId);
+            } else {
+                console.warn("User ID یافت نشد!");
+            }
+        });
+    </script>
+</body>
+</html>
