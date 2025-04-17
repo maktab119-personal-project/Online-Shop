@@ -1,7 +1,8 @@
 from django.urls import path
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from products.views import ProductListCreateView, CategoryListView, ProductRetrieveUpdateDeleteView
+from products.views import ProductListCreateView, CategoryListView, ProductRetrieveUpdateDeleteView, \
+    DiscountCreateAPIView
 from . import views
 from django.views.generic import TemplateView
 
@@ -23,6 +24,7 @@ urlpatterns = [
 
 
     path('profile/', TemplateView.as_view(template_name="profile.html"), name="profile"),
+    path('discounts/create/', DiscountCreateAPIView.as_view(), name='discount-create'),
 
     # path('profile/<int:id>/', TemplateView.as_view(template_name="profile.html"), name="profile_id"),
     # path('profile/<int:user_id>/', views.profile_view, name='profile'),
