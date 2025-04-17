@@ -1,7 +1,10 @@
+from django.utils import timezone
+from datetime import timedelta
+import random
 import phonenumbers
 from django.core.validators import RegexValidator
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser
+from django.contrib.auth.models import AbstractBaseUser , PermissionsMixin
 from rest_framework.exceptions import ValidationError
 from core.models import LogicalMixin
 from employee.models import Employee
@@ -26,7 +29,7 @@ def validate_image_size(image):
 #
 
 
-class Customer(AbstractBaseUser, LogicalMixin):
+class Customer(AbstractBaseUser,PermissionsMixin, LogicalMixin):
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     email = models.EmailField(unique=True)
@@ -49,15 +52,12 @@ class Customer(AbstractBaseUser, LogicalMixin):
     #     validators=[validate_phone_number]
     # )
     address = models.ForeignKey('Address', on_delete=models.SET_NULL, null=True, blank=True, related_name="customer_address")
-    # registration_date = models.DateTimeField(auto_now_add=True)
-    # update_at = models.DateTimeField(auto_now=True)
-    # is_active = models.BooleanField(default=True)
     is_admin = models.BooleanField(default=False)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['first_name', 'phone']
+    REQUIRED_FIELDS = ['first_name', 'last_name','phone']
 
     def __str__(self):
         return self.email
@@ -76,3 +76,19 @@ class Address(models.Model):
     street = models.CharField(max_length=255)
     number_plate = models.BigIntegerField()
     zipcode = models.CharField(max_length=20)
+
+
+class OTP(LogicalMixin):
+    user = models.OneToOneField(Customer, on_delete=models.CASCADE, related_name='otp')
+    code = models.CharField(max_length=6)
+    expires_at = models.DateTimeField()
+    def __str__(self):
+            return f'{self.user}, ( {self.otp} ),{self.created_at}'
+
+    def generate_otp(self):
+            self.otp = str(random.randint(100000, 999999))
+            self.expires_at = timezone.now() + timedelta(minutes=2)
+            self.save()
+
+    def is_otp_valid(self):
+            return timezone.now() <= self.expires_at
