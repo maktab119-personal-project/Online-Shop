@@ -25,33 +25,45 @@ class Product(LogicalMixin):
 
 
     def __str__(self):
-        return f"{self.name} - {self.discounts}{self.get_discounted_price()}"
+        return f"{self.name} - {self.discounts}{self.get_discount_price()}"
 
     def get_active_discounts(self):
         today = now().date()
         return self.discounts.filter(
             start_date__lte=today,
             end_date__gte=today,
-            code__isnull=True  # فقط تخفیف‌های عمومی برای محصول
+            # code__isnull=True  # فقط تخفیف‌های عمومی برای محصول
         )
 
     def get_discount_price(self):
-        discounts = self.get_active_discounts()
-        if not discounts.exists():
+        """Calculate price after applying best available discount"""
+        active_discounts = self.get_active_discounts()
+        print(">> Active Discounts:", active_discounts)
+        if not active_discounts.exists():
             return self.price
 
-        best_discount = max(
-            discounts,
-            key=lambda d: (d.value if not d.is_percentage else self.price * (d.value / 100))
-        )
+        best_discount = None
+        best_discount_value = 0
+
+        for discount in active_discounts:
+            if discount.is_percentage:
+                current_value = self.price * discount.value / 100
+            else:
+                current_value = discount.value
+
+            if current_value > best_discount_value:
+                best_discount_value = current_value
+                best_discount = discount
 
         if best_discount.is_percentage:
-            discounted = self.price - self.price * (best_discount.value / 100)
+            final_price = self.price * (1 - best_discount.value / 100)
         else:
-            discounted = self.price - best_discount.value
+            final_price = self.price - best_discount.value
 
-        return max(discounted, 0)
+        return max(round(final_price), 0)
 
+    # Alias for serializer compatibility
+    get_discounted_price = get_discount_price
 
 class Category(LogicalMixin):
     Level_choices = [
